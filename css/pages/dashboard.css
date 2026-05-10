@@ -1,0 +1,388 @@
+.dashboard-main {
+    padding-top: 34px;
+    padding-bottom: 56px;
+    display: grid;
+    gap: 24px;
+}
+
+.dashboard-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.dashboard-header-actions .btn {
+    min-height: 46px;
+    padding: 0.85rem 1.2rem;
+}
+
+.dashboard-header-actions .dashboard-logout {
+    min-height: 46px;
+    padding: 0.85rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.52fr) 330px;
+    gap: 22px;
+    align-items: start;
+}
+
+.dashboard-hero {
+    display: grid;
+    gap: 22px;
+    background:
+        radial-gradient(circle at top right, rgba(240, 203, 122, 0.22), transparent 26%),
+        linear-gradient(145deg, #fff9f2, #f6ede2);
+    box-shadow: var(--plate-shadow);
+}
+
+.dashboard-profile {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.dashboard-photo-shell {
+    position: relative;
+    width: 124px;
+    height: 124px;
+    border-radius: 34px;
+    overflow: hidden;
+    flex: 0 0 auto;
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-photo,
+.dashboard-photo-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 34px;
+}
+
+.dashboard-photo {
+    object-fit: cover;
+}
+
+.dashboard-photo-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #6d4132, #a15d43 54%, #e0b35f);
+    color: #fff8f0;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.dashboard-photo[hidden],
+.dashboard-photo-fallback[hidden],
+#profilePhotoInput[hidden] {
+    display: none !important;
+}
+
+.dashboard-copy {
+    display: grid;
+    gap: 8px;
+}
+
+.dashboard-copy h1 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    color: var(--ink);
+}
+
+.dashboard-upload-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 16px 0 4px;
+    border-top: 1px solid rgba(25, 48, 43, 0.08);
+    border-bottom: 1px solid rgba(25, 48, 43, 0.08);
+}
+
+.dashboard-upload-btn {
+    cursor: pointer;
+}
+
+.dashboard-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.dashboard-metrics .metric-card {
+    min-height: 126px;
+}
+
+.dashboard-side {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+}
+
+.dashboard-side h2 {
+    font-size: 2.1rem;
+    color: var(--ink);
+}
+
+.dashboard-action-list {
+    display: grid;
+    gap: 12px;
+}
+
+.dashboard-action-link {
+    display: block;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(250, 241, 231, 0.78);
+    border: 1px solid rgba(47, 32, 26, 0.08);
+}
+
+.dashboard-recipes .section-heading {
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(25, 48, 43, 0.08);
+}
+
+.dashboard-recipes .listing-grid {
+    margin-top: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard-recipes .listing-media {
+    min-height: 210px;
+}
+
+.dashboard-empty {
+    display: grid;
+    gap: 8px;
+}
+
+.listing-grid:empty::before {
+    content: "Nothing here yet.";
+    display: block;
+    padding: 42px 20px;
+    text-align: center;
+    border-radius: 24px;
+    border: 1px dashed rgba(47, 32, 26, 0.18);
+    background: rgba(255, 249, 241, 0.76);
+    color: var(--ink-soft);
+}
+
+@media (max-width: 1080px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 820px) {
+    .dashboard-header-actions,
+    .dashboard-upload-row,
+    .dashboard-recipes .listing-grid,
+    .dashboard-metrics {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-profile {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-main {
+        padding-top: 18px;
+        padding-bottom: 32px;
+        gap: 16px;
+    }
+
+    .dashboard-profile {
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .dashboard-copy {
+        justify-items: center;
+    }
+
+    .dashboard-copy h1 {
+        font-size: clamp(1.9rem, 10vw, 2.6rem);
+    }
+
+    .dashboard-photo-shell {
+        width: 92px;
+        height: 92px;
+        border-radius: 24px;
+    }
+
+    .dashboard-photo,
+    .dashboard-photo-fallback {
+        border-radius: 24px;
+    }
+
+    .dashboard-photo-fallback {
+        font-size: 1.55rem;
+    }
+
+    .dashboard-upload-row,
+    .dashboard-header-actions {
+        gap: 10px;
+    }
+
+    .dashboard-layout {
+        gap: 14px;
+    }
+
+    .dashboard-side h2 {
+        font-size: 1.6rem;
+    }
+
+    .dashboard-action-link {
+        padding: 12px 14px;
+        border-radius: 16px;
+    }
+
+    .dashboard-side {
+        order: -1;
+    }
+
+    .dashboard-recipes .listing-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 2026 remodel: dashboard refresh */
+.dashboard-hero,
+.dashboard-side,
+.dashboard-recipes {
+    border-radius: 30px;
+    box-shadow: 0 12px 28px rgba(101, 72, 34, 0.08), 0 18px 34px rgba(124, 89, 40, 0.08);
+}
+
+.dashboard-photo-shell {
+    box-shadow: 0 12px 24px rgba(101, 72, 34, 0.12);
+}
+
+.dashboard-photo-fallback {
+    background: linear-gradient(145deg, #6a3f31, #9f5d43 54%, #e0b35f);
+}
+
+.photo-editor-modal[hidden] {
+    display: none !important;
+}
+
+.photo-editor-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(45, 29, 22, 0.48);
+    backdrop-filter: blur(10px);
+}
+
+.photo-editor-dialog {
+    width: min(680px, 100%);
+    display: grid;
+    gap: 22px;
+    padding: 24px;
+    border-radius: 30px;
+    background: rgba(255, 250, 243, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    box-shadow: 0 22px 44px rgba(101, 72, 34, 0.22);
+}
+
+.photo-editor-header,
+.photo-editor-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.photo-editor-stage-shell {
+    display: grid;
+    place-items: center;
+}
+
+.photo-editor-stage {
+    position: relative;
+    width: min(100%, 420px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 28px;
+    background:
+        linear-gradient(180deg, rgba(17, 32, 28, 0.08), rgba(17, 32, 28, 0.28)),
+        linear-gradient(145deg, #5b3429, #8d543d 44%, #d97852 84%, #f0cb7a);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.photo-editor-stage.is-dragging {
+    cursor: grabbing;
+}
+
+.photo-editor-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: none;
+    transform-origin: center center;
+    will-change: transform, width, height;
+}
+
+.photo-editor-frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    box-shadow:
+        0 0 0 999px rgba(28, 22, 16, 0.34),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.92);
+    pointer-events: none;
+}
+
+.photo-editor-controls {
+    display: grid;
+    gap: 16px;
+}
+
+.photo-editor-zoom {
+    display: grid;
+    gap: 8px;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.photo-editor-zoom span {
+    font-size: 0.9rem;
+}
+
+.photo-editor-zoom input {
+    width: 100%;
+    accent-color: var(--brand);
+}
+
+@media (max-width: 640px) {
+    .photo-editor-dialog {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .photo-editor-header,
+    .photo-editor-actions {
+        align-items: stretch;
+    }
+
+    .photo-editor-close,
+    .photo-editor-actions .btn {
+        width: 100%;
+    }
+}
