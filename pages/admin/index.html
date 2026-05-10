@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/admin.css">
+</head>
+<body>
+    <main class="admin-home">
+        <header class="admin-home-header">
+            <div class="admin-home-copy">
+                <p class="admin-eyebrow">Admin panel</p>
+                <h1 class="admin-title">Recipe Management</h1>
+                <p class="admin-subtitle">Review submitted recipes and manage user accounts.</p>
+            </div>
+            <div class="admin-header-actions">
+                <div class="admin-user-chip">
+                    <span class="admin-user-label">Signed in as</span>
+                    <strong id="adminUser">admin</strong>
+                </div>
+                <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
+            </div>
+        </header>
+
+        <section class="admin-overview-grid admin-overview-grid-simple" aria-label="Admin overview metrics">
+            <article class="stat-card">
+                <div class="stat-card-head">
+                    <span class="stat-dot stat-dot-total" aria-hidden="true"></span>
+                    <span class="stat-label">Total recipes</span>
+                </div>
+                <div class="stat-copy">
+                    <div class="stat-number" id="totalRecipes">0</div>
+                    <p>All submitted dishes in the system.</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-card-head">
+                    <span class="stat-dot stat-dot-pending" aria-hidden="true"></span>
+                    <span class="stat-label">Pending review</span>
+                </div>
+                <div class="stat-copy">
+                    <div class="stat-number" id="pendingRecipes">0</div>
+                    <p>Recipes waiting for admin action.</p>
+                </div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-card-head">
+                    <span class="stat-dot stat-dot-approved" aria-hidden="true"></span>
+                    <span class="stat-label">Recipes available</span>
+                </div>
+                <div class="stat-copy">
+                    <div class="stat-number" id="availableRecipes">0</div>
+                    <p>Approved recipes visible to users.</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="admin-workspace">
+            <div class="admin-main-grid">
+                <section class="admin-panel admin-panel-recipes">
+                    <div class="table-header">
+                        <div>
+                            <p class="panel-kicker">Queue</p>
+                            <h2>Recipe submissions</h2>
+                        </div>
+                        <span class="panel-pill">Moderation</span>
+                    </div>
+                    <div class="table-shell">
+                        <table class="table">
+                            <caption class="sr-only">Recipes available for administration</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Creator</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recipesTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="admin-panel admin-review-panel" aria-labelledby="reviewPanelTitle">
+                    <div class="table-header">
+                        <div>
+                            <p class="panel-kicker">Workspace</p>
+                            <h2 id="reviewPanelTitle">Review details</h2>
+                        </div>
+                        <span class="panel-pill">Preview</span>
+                    </div>
+                    <div id="reviewPanelContent" class="review-empty-state">
+                        Click <strong>Review</strong> on a pending recipe to open the full review pop-up.
+                    </div>
+                </section>
+            </div>
+
+            <section class="admin-panel admin-users-panel">
+                <div class="table-header">
+                    <div>
+                        <p class="panel-kicker">Accounts</p>
+                        <h2>Users</h2>
+                    </div>
+                    <span class="panel-pill">Members</span>
+                </div>
+                <div class="table-shell">
+                    <table class="table">
+                        <caption class="sr-only">Registered users</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Joined</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div id="reviewModal" class="review-modal" hidden>
+        <div class="review-modal-backdrop" data-close-review-modal></div>
+        <section class="review-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+            <button class="review-modal-close" type="button" aria-label="Close review details" data-close-review-modal>&times;</button>
+            <div id="reviewModalContent" class="review-modal-content"></div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

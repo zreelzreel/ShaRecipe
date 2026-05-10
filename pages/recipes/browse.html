@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Recipes - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/home.css">
+</head>
+<body class="marketplace-page">
+    <header class="home-header">
+        <div class="header-content market-shell">
+            <a class="logo-nav brand-mark" href="home.html" aria-label="Go to ShaRecipe home">
+                <span class="brand-badge" aria-hidden="true">SR</span>
+                <span class="brand-copy">
+                    <strong>ShaRecipe</strong>
+                    <span>Browse recipes</span>
+                </span>
+            </a>
+            <div class="profile-nav">
+                <span class="header-user" id="userName">Your account</span>
+                <button id="dashboardBtn" class="btn btn-secondary" type="button">Profile</button>
+                <button id="postBtn" class="btn btn-secondary" type="button">Post Recipe</button>
+                <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="market-main">
+        <section class="market-shell page-intro" aria-labelledby="browseTitle">
+            <p class="eyebrow">Discover</p>
+            <h1 id="browseTitle">Find your next dish to make at home.</h1>
+            <p class="results-copy">Search recipe titles, creators, and descriptions, then narrow the board by category or your own shared dishes.</p>
+        </section>
+
+        <section class="search-filter market-shell" aria-label="Recipe filters">
+            <form class="search-box" id="browseSearchForm" role="search">
+                <label class="sr-only" for="searchInput">Search recipes</label>
+                <button class="search-icon search-submit" type="submit">Search</button>
+                <input type="text" id="searchInput" placeholder="Search recipes by title, description, or creator">
+            </form>
+            <div class="category-filter-shell">
+                <label class="sr-only" for="categoryFilter">Filter by food category</label>
+                <select id="categoryFilter" class="category-filter-select">
+                    <option value="all">All categories</option>
+                </select>
+            </div>
+            <div class="filter-group" role="tablist" aria-label="Recipe list filters">
+                <button class="filter-btn active" data-filter="all" type="button">All recipes</button>
+                <button class="filter-btn" data-filter="mine" type="button">My recipes</button>
+            </div>
+        </section>
+
+        <section class="market-shell">
+            <div class="recipe-grid" id="recipeGrid" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="browse.js"></script>
+</body>
+</html>

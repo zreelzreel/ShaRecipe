@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/auth.css">
+</head>
+<body class="auth-page">
+    <main class="auth-container">
+        <section class="auth-showcase" aria-hidden="true">
+            <a class="auth-brand" href="../../index.html">
+                <span class="brand-badge">SR</span>
+                <span class="auth-brand-copy">
+                    <strong>ShaRecipe</strong>
+                    <span>EST. 2026</span>
+                </span>
+            </a>
+
+            <div class="auth-showcase-copy">
+                <span class="auth-kicker">Join the table</span>
+                <h1>Create your account and start building your own food story.</h1>
+                <p>Set up your recipe space, publish your dishes, and keep every cooking idea in a modern interface inspired by warm kitchens and shared meals.</p>
+            </div>
+
+            <div class="auth-storyboard">
+                <article class="auth-story-tile">
+                    <strong>Post dishes that feel personal, polished, and easy to follow.</strong>
+                    <p>Your recipes get a stronger presentation with a cleaner layout from the very first post.</p>
+                </article>
+                <div class="auth-mini-stack">
+                    <article class="auth-mini-card">
+                        <strong>Share favorites</strong>
+                        <span>Publish meals, drinks, desserts, and everyday staples.</span>
+                    </article>
+                    <article class="auth-mini-card">
+                        <strong>Stay organized</strong>
+                        <span>Keep your posts, notes, and updates easier to manage.</span>
+                    </article>
+                </div>
+            </div>
+
+            <div class="auth-showcase-highlights">
+                <article class="auth-highlight">
+                    <strong>Designed for cooks</strong>
+                    <span>Everything feels food-first instead of generic.</span>
+                </article>
+                <article class="auth-highlight">
+                    <strong>Built to share</strong>
+                    <span>Your dishes look more intentional the moment you post them.</span>
+                </article>
+                <article class="auth-highlight">
+                    <strong>Easy to revisit</strong>
+                    <span>Come back to your own recipe ideas anytime.</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="auth-card card">
+            <div class="auth-card-body">
+                <h2>Create account</h2>
+                <p class="auth-intro">Start your cooking space and begin sharing the dishes you care about.</p>
+
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" autocomplete="username" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" autocomplete="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="signupPassword" autocomplete="new-password" minlength="6" placeholder="Create a password" required>
+                            <button class="toggle-password" type="button" aria-label="Show password">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">Create Account</button>
+                </form>
+
+                <div class="auth-links">
+                    <p>Already have an account? <a href="login.html">Login</a></p>
+                    <p><a href="../../index.html">Back to Home</a></p>
+                </div>
+
+                <div id="signupError" class="error-message"></div>
+                <div id="signupSuccess" class="success-message" style="display:none;"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="signup.js"></script>
+</body>
+</html>

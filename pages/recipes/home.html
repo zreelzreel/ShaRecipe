@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/home.css">
+</head>
+<body class="marketplace-page">
+    <header class="market-header">
+        <div class="market-shell">
+            <div class="header-top">
+                <a href="home.html" class="brand-mark" aria-label="ShaRecipe home">
+                    <span class="brand-badge">SR</span>
+                    <span class="brand-copy">
+                        <strong>ShaRecipe</strong>
+                        <span>Recipe home</span>
+                    </span>
+                </a>
+
+                <form class="market-search" role="search">
+                    <label class="sr-only" for="searchInput">Search recipes</label>
+                    <button class="search-prefix search-submit" type="submit">Search</button>
+                    <input type="search" id="searchInput" placeholder="Search by dish, ingredient, or creator">
+                </form>
+
+                <div class="header-actions user-home-actions">
+                    <div class="notification-shell">
+                        <button id="notificationBtn" class="btn btn-secondary notification-btn" type="button" aria-expanded="false" aria-controls="notificationPanel" aria-label="Notifications">
+                            <span class="notification-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M12 3.75a4.25 4.25 0 0 0-4.25 4.25v1.05c0 .86-.28 1.69-.79 2.38l-1.1 1.47a2.25 2.25 0 0 0 1.8 3.6h8.68a2.25 2.25 0 0 0 1.8-3.6l-1.1-1.47a3.97 3.97 0 0 1-.79-2.38V8A4.25 4.25 0 0 0 12 3.75Zm0 17a2.74 2.74 0 0 1-2.42-1.5h4.84A2.74 2.74 0 0 1 12 20.75Z"></path>
+                                </svg>
+                            </span>
+                            <span id="notificationCount" class="notification-count" hidden>0</span>
+                        </button>
+                        <section id="notificationPanel" class="notification-panel" hidden>
+                            <div class="notification-panel-head">
+                                <h3>Notifications</h3>
+                                <small id="notificationSummary">0 unread</small>
+                            </div>
+                            <div id="notificationList" class="notification-list" aria-live="polite"></div>
+                        </section>
+                    </div>
+                    <button id="postBtn" class="btn btn-primary" type="button">Post Recipe</button>
+                    <button id="dashboardBtn" class="btn btn-secondary" type="button">Profile</button>
+                    <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
+                </div>
+            </div>
+
+            <div class="header-bottom">
+                <div class="quick-nav" aria-label="Recipe filters">
+                    <button class="filter-chip active" type="button" data-filter="all">All recipes</button>
+                    <button class="filter-chip" type="button" data-filter="mine">My recipes</button>
+                </div>
+
+                <div class="header-user-badge profile-display" aria-label="Signed-in profile">
+                    <span class="profile-avatar" id="profileAvatar">SR</span>
+                    <span class="profile-copy">
+                        <span id="userName">Your account</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="market-shell market-main user-home-main">
+        <section class="user-home-overview">
+            <div class="hero-copy">
+                <p class="eyebrow">Recipe board</p>
+                <h1 id="heroTitle">Share recipes and keep your cooking ideas organized.</h1>
+                <p class="hero-text">Browse community dishes, return to your own posts, and keep every kitchen idea in a cleaner food-first feed.</p>
+            </div>
+
+            <div class="user-home-stats" aria-label="User account overview">
+                <article class="hero-stat">
+                    <span class="hero-stat-label">Recipes available</span>
+                    <strong id="totalRecipesCount">0</strong>
+                </article>
+                <article class="hero-stat">
+                    <span class="hero-stat-label">My dishes</span>
+                    <strong id="myRecipesCount">0</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="listing-section user-recipes-panel" aria-labelledby="listingTitle">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Fresh picks</p>
+                    <h2 id="listingTitle">Recipe feed</h2>
+                </div>
+                <div class="recipe-feed-tools">
+                    <div class="category-filter-shell">
+                        <label class="sr-only" for="categoryFilter">Filter by food category</label>
+                        <select id="categoryFilter" class="category-filter-select">
+                            <option value="all">All categories</option>
+                        </select>
+                    </div>
+                    <p class="results-copy" id="resultsSummary">0 results</p>
+                </div>
+            </div>
+
+            <div id="emptyState" class="empty-state" hidden>
+                <h3>No recipes match this search.</h3>
+                <p>Try another keyword or switch to your own recipes.</p>
+            </div>
+
+            <div id="recipeGrid" class="listing-grid" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="home.js"></script>
+</body>
+</html>

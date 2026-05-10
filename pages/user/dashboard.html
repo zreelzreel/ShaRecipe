@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/home.css">
+    <link rel="stylesheet" href="../../css/pages/dashboard.css">
+</head>
+<body class="marketplace-page">
+    <header class="market-header">
+        <div class="market-shell">
+            <div class="header-top">
+                <a href="../recipes/home.html" class="brand-mark" aria-label="ShaRecipe home">
+                    <span class="brand-badge">SR</span>
+                    <span class="brand-copy">
+                        <strong>ShaRecipe</strong>
+                        <span>Profile center</span>
+                    </span>
+                </a>
+
+                <div class="dashboard-header-actions">
+                    <button id="browseBtn" class="btn btn-secondary" type="button">Browse Recipes</button>
+                    <button id="postBtn" class="btn btn-primary" type="button">Post New Recipe</button>
+                    <button id="logoutBtn" class="btn btn-secondary dashboard-logout" type="button">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="market-shell dashboard-main">
+        <section class="dashboard-layout" aria-labelledby="profileTitle">
+            <section class="dashboard-hero">
+                <div class="dashboard-profile">
+                    <div class="dashboard-photo-shell">
+                        <img id="profilePhoto" class="dashboard-photo" alt="Profile photo" hidden>
+                        <div id="profilePhotoFallback" class="dashboard-photo-fallback">SR</div>
+                    </div>
+                    <div class="dashboard-copy">
+                        <p class="eyebrow">My profile</p>
+                        <h1 id="profileTitle"><span id="userDisplayName">Your profile</span></h1>
+                        <p class="dashboard-subtitle" id="profileEmail">Signed-in member</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-upload-row">
+                    <label for="profilePhotoInput" class="btn btn-primary dashboard-upload-btn">Change Profile Photo</label>
+                    <input id="profilePhotoInput" type="file" accept="image/*" hidden>
+                    <button id="removePhotoBtn" class="btn btn-secondary" type="button">Remove Photo</button>
+                </div>
+
+                <div class="dashboard-metrics" aria-label="Profile summary">
+                    <article class="metric-card">
+                        <span class="hero-stat-label">My recipes</span>
+                        <strong id="myRecipesCount">0</strong>
+                    </article>
+                    <article class="metric-card">
+                        <span class="hero-stat-label">Likes received</span>
+                        <strong id="likesCount">0</strong>
+                    </article>
+                    <article class="metric-card">
+                        <span class="hero-stat-label">Joined</span>
+                        <strong id="joinedYear">0</strong>
+                    </article>
+                </div>
+            </section>
+
+            <aside class="dashboard-side" aria-label="Quick actions">
+                <p class="eyebrow">Quick actions</p>
+                <h2>Keep your kitchen board moving.</h2>
+                <div class="dashboard-action-list">
+                    <a class="dashboard-action-link" href="../recipes/home.html">Browse recipes</a>
+                    <a class="dashboard-action-link" href="../recipes/post-recipe.html">Post a new recipe</a>
+                </div>
+            </aside>
+        </section>
+
+        <section class="dashboard-recipes" aria-labelledby="recentTitle">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Recent activity</p>
+                    <h2 id="recentTitle">My recent recipes</h2>
+                </div>
+            </div>
+
+            <div id="myRecentRecipes" class="listing-grid" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <div id="photoEditorModal" class="photo-editor-modal" hidden>
+        <div class="photo-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="photoEditorTitle">
+            <div class="photo-editor-header">
+                <div>
+                    <p class="eyebrow">Profile photo</p>
+                    <h2 id="photoEditorTitle">Crop your photo</h2>
+                </div>
+                <button id="closePhotoEditorBtn" class="btn btn-secondary photo-editor-close" type="button">Cancel</button>
+            </div>
+
+            <div class="photo-editor-stage-shell">
+                <div id="photoEditorStage" class="photo-editor-stage">
+                    <img id="photoEditorImage" class="photo-editor-image" alt="Profile photo editor preview">
+                    <div class="photo-editor-frame" aria-hidden="true"></div>
+                </div>
+            </div>
+
+            <div class="photo-editor-controls">
+                <label class="photo-editor-zoom">
+                    <span>Zoom</span>
+                    <input id="photoZoomInput" type="range" min="1" max="3" step="0.01" value="1">
+                </label>
+                <div class="photo-editor-actions">
+                    <button id="resetPhotoEditorBtn" class="btn btn-secondary" type="button">Reset</button>
+                    <button id="savePhotoEditorBtn" class="btn btn-primary" type="button">Save photo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
+

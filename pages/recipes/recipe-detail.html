@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Recipe Detail - ShaRecipe</title>
+    <link rel="stylesheet" href="../../css/base/main.css">
+    <link rel="stylesheet" href="../../css/pages/home.css">
+    <link rel="stylesheet" href="../../css/pages/detail.css">
+</head>
+<body class="marketplace-page detail-page">
+    <header class="home-header detail-header">
+        <div class="header-content detail-container">
+            <a class="logo-nav brand-mark" href="home.html" aria-label="Go to ShaRecipe home">
+                <span class="brand-badge" aria-hidden="true">SR</span>
+                <span class="brand-copy">
+                    <strong>ShaRecipe</strong>
+                    <span>Recipe detail</span>
+                </span>
+            </a>
+            <div class="profile-nav">
+                <span class="header-user" id="detailUser"></span>
+                <button id="dashboardBtn" class="btn btn-secondary" type="button">Profile</button>
+                <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="detail-main">
+        <section class="detail-hero">
+            <div class="detail-container detail-hero-grid">
+                <div class="recipe-visual-card">
+                    <div class="recipe-hero-image" id="recipeImageFrame">
+                        <img id="recipeImage" alt="Recipe photo" hidden>
+                        <div class="recipe-image-fallback" id="recipeImageFallback" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <div class="recipe-hero-copy">
+                    <p class="eyebrow">Dish profile</p>
+                    <h1 class="recipe-title-detail" id="recipeTitle">Recipe Title</h1>
+                    <p class="recipe-description-detail" id="recipeDescription">Recipe description goes here.</p>
+
+                    <div class="recipe-meta-cluster">
+                        <div class="recipe-author-card">
+                            <span class="hero-stat-label">Shared by</span>
+                            <strong class="recipe-creator" id="recipeCreator">Creator</strong>
+                        </div>
+                        <div class="recipe-price-large" id="recipePrice">Recipe</div>
+                    </div>
+
+                    <div class="recipe-stat-strip">
+                        <article>
+                            <span>Listed</span>
+                            <strong id="recipeDate">Today</strong>
+                        </article>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="getRecipeBtn" class="btn btn-large btn-success" type="button">Start Cooking</button>
+                        <button id="favoriteBtn" class="btn btn-large favorite-btn" type="button">Like</button>
+                        <button id="editRecipeBtn" class="btn btn-large btn-secondary" type="button" hidden>Edit Recipe</button>
+                        <button id="deleteRecipeBtn" class="btn btn-large delete-recipe-btn" type="button" hidden>Delete Recipe</button>
+                        <button id="backBtn" class="btn btn-large back-btn" type="button">Back to Feed</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="detail-container detail-sections" id="cookingSections" hidden>
+            <div class="detail-sections-toolbar">
+                <button id="closeCookingBtn" class="btn btn-secondary" type="button">Close Recipe</button>
+            </div>
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Ingredients</h2>
+                    <span class="section-note">Everything you need on hand</span>
+                </div>
+                <ul class="ingredients-list" id="ingredientsList"></ul>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Instructions</h2>
+                    <span class="section-note">Cook through each step smoothly</span>
+                </div>
+                <ol class="steps-list" id="stepsList"></ol>
+            </section>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/core/supabase.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="recipe-detail.js"></script>
+</body>
+</html>
