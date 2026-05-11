@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const app = window.ShaRecipeApp;
     await app.ready;
 
-    const currentUser = app.requireUser();
+    let currentUser = app.requireUser();
     if (!currentUser) {
         return;
     }
@@ -61,6 +61,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     renderRecipes();
+
+    const unsubscribeData = app.subscribeToData(function() {
+        const refreshedUser = app.getCurrentUser();
+        if (!refreshedUser) {
+            app.goToLanding();
+            return;
+        }
+
+        currentUser = refreshedUser;
+        if (userNameElement) {
+            userNameElement.textContent = app.getDisplayName(currentUser);
+        }
+        renderRecipes();
+    });
+
+    window.addEventListener('pagehide', unsubscribeData);
 
     function hydrateCategoryFilter() {
         if (!categoryFilter) {

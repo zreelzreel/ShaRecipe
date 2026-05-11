@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const app = window.ShaRecipeApp;
     await app.ready;
 
-    const user = app.requireUser();
+    let user = app.requireUser();
     if (!user) {
         return;
     }
@@ -33,12 +33,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     let activeFilter = 'all';
     const initialSearchState = readSearchFromUrl();
 
-    hydrateUser();
     hydrateCategoryFilter();
     applySearchState(initialSearchState);
-    renderStats();
-    renderNotifications();
-    renderRecipes();
+    rerenderAll();
+
+    const unsubscribeData = app.subscribeToData(function() {
+        const refreshedUser = app.getCurrentUser();
+        if (!refreshedUser) {
+            app.goToLanding();
+            return;
+        }
+
+        user = refreshedUser;
+        rerenderAll();
+    });
 
     window.addEventListener('storage', function(event) {
         if (event.key && event.key !== app.storageKeys.users && event.key !== app.storageKeys.recipes && event.key !== app.storageKeys.currentUser) {
@@ -51,10 +59,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        renderStats();
-        renderNotifications();
-        renderRecipes();
+        user = refreshedUser;
+        rerenderAll();
     });
+
+    window.addEventListener('pagehide', unsubscribeData);
 
     logoutBtn?.addEventListener('click', function() {
         app.logout();
@@ -113,6 +122,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             renderRecipes();
         });
     });
+
+    function rerenderAll() {
+        hydrateUser();
+        renderStats();
+        renderNotifications();
+        renderRecipes();
+    }
 
     function hydrateUser() {
         const displayName = app.getDisplayName(user);
