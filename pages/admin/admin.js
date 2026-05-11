@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
+    const unsubscribeData = app.subscribeToData(function() {
+        if (!app.getCurrentUser() || app.getCurrentUser().role !== 'admin') {
+            app.goToLanding();
+            return;
+        }
+
+        rerenderAll();
+    });
+
+    window.addEventListener('pagehide', unsubscribeData);
+
     rerenderAll();
 
     function renderOverview() {
