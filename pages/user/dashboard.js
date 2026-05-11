@@ -27,9 +27,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     let user = sanitizeUser(activeUser);
     let editorState = createEditorState();
 
-    hydrateProfile();
-    loadProfileStats();
-    loadMyRecentRecipes();
+    rerenderAll();
+
+    const unsubscribeData = app.subscribeToData(function() {
+        const refreshedUser = app.getCurrentUser();
+        if (!refreshedUser) {
+            app.goToLanding();
+            return;
+        }
+
+        user = sanitizeUser(refreshedUser);
+        rerenderAll();
+    });
 
     window.addEventListener('storage', function(event) {
         if (event.key && event.key !== app.storageKeys.currentUser && event.key !== app.storageKeys.recipes && event.key !== app.storageKeys.users) {
@@ -43,10 +52,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         user = sanitizeUser(refreshedUser);
-        hydrateProfile();
-        loadProfileStats();
-        loadMyRecentRecipes();
+        rerenderAll();
     });
+
+    window.addEventListener('pagehide', unsubscribeData);
 
     logoutBtn?.addEventListener('click', function() {
         app.logout();
@@ -316,6 +325,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             startOffsetX: 0,
             startOffsetY: 0
         };
+    }
+
+    function rerenderAll() {
+        hydrateProfile();
+        loadProfileStats();
+        loadMyRecentRecipes();
     }
 
     function loadProfileStats() {
