@@ -19,6 +19,12 @@ class ShaRecipeApp {
 
         this.dataVersion = '2026-05-11-supabase-sync';
         this.supabase = window.supabaseClient || null;
+        this.dataListeners = new Set();
+        this.refreshInFlight = null;
+        this.refreshTimer = null;
+        this.realtimeChannel = null;
+        this.pollingInterval = null;
+        this.lastRefreshAt = 0;
         this.users = this.loadCollection(this.storageKeys.users);
         this.recipes = this.loadCollection(this.storageKeys.recipes);
         this.currentUser = this.loadObject(this.storageKeys.currentUser);
@@ -41,6 +47,7 @@ class ShaRecipeApp {
 
         await this.ensureRemoteAdmin();
         await this.refreshData();
+        this.startSyncServices();
     }
 
     loadCollection(key) {
@@ -130,34 +137,150 @@ class ShaRecipeApp {
     }
 
     async refreshData() {
-        const [usersResult, recipesResult] = await Promise.all([
-            this.supabase
-                .from('users')
-                .select('*')
-                .order('created_at', { ascending: true }),
-            this.supabase
-                .from('recipes')
-                .select('*')
-                .order('created_at', { ascending: false })
-        ]);
-
-        if (usersResult.error) {
-            throw usersResult.error;
-        }
-        if (recipesResult.error) {
-            throw recipesResult.error;
+        if (this.refreshInFlight) {
+            return this.refreshInFlight;
         }
 
-        this.users = this.mergeRemoteUsers(usersResult.data || []);
-        this.recipes = this.mergeRemoteRecipes(recipesResult.data || []);
+        this.refreshInFlight = (async () => {
+            const [usersResult, recipesResult] = await Promise.all([
+                this.supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: true }),
+                this.supabase
+                    .from('recipes')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+            ]);
 
-        if (this.currentUser?.id) {
-            this.currentUser = this.getUserById(this.currentUser.id) || null;
+            if (usersResult.error) {
+                throw usersResult.error;
+            }
+            if (recipesResult.error) {
+                throw recipesResult.error;
+            }
+
+            this.users = this.mergeRemoteUsers(usersResult.data || []);
+            this.recipes = this.mergeRemoteRecipes(recipesResult.data || []);
+
+            if (this.currentUser?.id) {
+                this.currentUser = this.getUserById(this.currentUser.id) || null;
+            }
+
+            this.lastRefreshAt = Date.now();
+            this.saveUsers();
+            this.saveRecipes();
+            this.saveCurrentUser();
+            this.notifyDataListeners();
+        })();
+
+        try {
+            return await this.refreshInFlight;
+        } finally {
+            this.refreshInFlight = null;
+        }
+    }
+
+    async refreshDataSafe() {
+        try {
+            await this.refreshData();
+            return true;
+        } catch (error) {
+            console.error('Unable to refresh shared data.', error);
+            return false;
+        }
+    }
+
+    subscribeToData(listener) {
+        if (typeof listener !== 'function') {
+            return function noop() {};
         }
 
-        this.saveUsers();
-        this.saveRecipes();
-        this.saveCurrentUser();
+        this.dataListeners.add(listener);
+        return () => {
+            this.dataListeners.delete(listener);
+        };
+    }
+
+    notifyDataListeners() {
+        this.dataListeners.forEach((listener) => {
+            try {
+                listener({
+                    users: this.users,
+                    recipes: this.recipes,
+                    currentUser: this.currentUser
+                });
+            } catch (error) {
+                console.error('Unable to notify a page subscriber.', error);
+            }
+        });
+    }
+
+    requestDataRefresh(reason = 'manual', delay = 0) {
+        if (this.refreshTimer) {
+            window.clearTimeout(this.refreshTimer);
+        }
+
+        this.refreshTimer = window.setTimeout(() => {
+            this.refreshTimer = null;
+            this.refreshDataSafe();
+        }, delay);
+    }
+
+    startSyncServices() {
+        this.setupVisibilityRefresh();
+        this.startPollingRefresh();
+        this.startRealtimeSync();
+    }
+
+    setupVisibilityRefresh() {
+        window.addEventListener('focus', () => {
+            this.requestDataRefresh('focus');
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                this.requestDataRefresh('visible');
+            }
+        });
+    }
+
+    startPollingRefresh() {
+        if (this.pollingInterval) {
+            return;
+        }
+
+        this.pollingInterval = window.setInterval(() => {
+            if (document.visibilityState === 'hidden') {
+                return;
+            }
+
+            this.requestDataRefresh('poll');
+        }, 10000);
+    }
+
+    startRealtimeSync() {
+        if (!this.supabase || this.realtimeChannel) {
+            return;
+        }
+
+        this.realtimeChannel = this.supabase
+            .channel('sharecipe-live-sync')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, () => {
+                this.requestDataRefresh('recipes-realtime', 150);
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+                this.requestDataRefresh('users-realtime', 150);
+            })
+            .subscribe((status) => {
+                if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                    console.warn('Supabase realtime sync is delayed, fallback polling will continue.');
+                }
+            });
+    }
+
+    generateId(prefix) {
+        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     }
 
     mergeRemoteUsers(remoteUsers) {
@@ -350,6 +473,7 @@ class ShaRecipeApp {
             ? { ...user, notifications: [notification].concat(Array.isArray(user.notifications) ? user.notifications : []) }
             : user);
         this.saveUsers();
+        this.notifyDataListeners();
 
         if (this.currentUser?.id === userId) {
             this.currentUser = this.getUserById(userId);
@@ -375,6 +499,7 @@ class ShaRecipeApp {
             }
             : entry);
         this.saveUsers();
+        this.notifyDataListeners();
 
         if (this.currentUser?.id === userId) {
             this.currentUser = this.getUserById(userId);
@@ -487,6 +612,8 @@ class ShaRecipeApp {
     }
 
     async createUser(userData) {
+        await this.refreshDataSafe();
+
         const username = String(userData?.username || '').trim();
         const email = String(userData?.email || '').trim();
         const password = String(userData?.password || '');
@@ -504,7 +631,7 @@ class ShaRecipeApp {
         }
 
         const newUser = {
-            id: `user-${Date.now()}`,
+            id: this.generateId('user'),
             username,
             email,
             password,
@@ -558,6 +685,7 @@ class ShaRecipeApp {
         this.users = this.users.map((user) => user.id === this.currentUser.id ? { ...user, ...updates } : user);
         this.saveUsers();
         this.saveCurrentUser();
+        this.notifyDataListeners();
         return this.currentUser;
     }
 
@@ -568,7 +696,7 @@ class ShaRecipeApp {
         }
 
         const payload = {
-            id: `recipe-${Date.now()}`,
+            id: this.generateId('recipe'),
             user_id: activeUser.id,
             title: recipeData.title,
             description: recipeData.description,
