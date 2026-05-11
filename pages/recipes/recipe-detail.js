@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    const recipe = app.recipes.find(function(entry) {
+    let recipe = app.recipes.find(function(entry) {
         return entry.id === recipeId;
     });
 
@@ -49,6 +49,39 @@ document.addEventListener('DOMContentLoaded', async function() {
     const status = app.normalizeRecipeStatus(recipe.status);
     let favoritePending = false;
     let deletePending = false;
+
+    const unsubscribeData = app.subscribeToData(function() {
+        const refreshedUser = app.getCurrentUser();
+        if (!refreshedUser) {
+            app.goToLanding();
+            return;
+        }
+
+        const refreshedRecipe = app.recipes.find(function(entry) {
+            return entry.id === recipeId;
+        });
+
+        if (!refreshedRecipe || !app.isRecipeVisibleToUser(refreshedRecipe, refreshedUser)) {
+            app.goToUserHome();
+            return;
+        }
+
+        const recipeChanged = refreshedRecipe.likes !== recipe.likes
+            || refreshedRecipe.status !== recipe.status
+            || refreshedRecipe.title !== recipe.title
+            || refreshedRecipe.description !== recipe.description
+            || refreshedRecipe.image !== recipe.image
+            || refreshedRecipe.reviewRemarks !== recipe.reviewRemarks
+            || JSON.stringify(refreshedRecipe.ingredients || []) !== JSON.stringify(recipe.ingredients || [])
+            || JSON.stringify(refreshedRecipe.steps || []) !== JSON.stringify(recipe.steps || []);
+
+        if (recipeChanged) {
+            recipe = refreshedRecipe;
+            window.location.reload();
+        }
+    });
+
+    window.addEventListener('pagehide', unsubscribeData);
 
     setText('detailUser', app.getDisplayName(currentUser));
     setText('recipeTitle', recipe.title);
