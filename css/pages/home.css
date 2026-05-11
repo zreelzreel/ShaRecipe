@@ -1542,6 +1542,317 @@
 }
 
 @media (max-width: 640px) {
+    .marketplace-page .market-shell {
+        width: min(100% - 16px, 1240px);
+    }
+
+    .marketplace-page .header-top {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .marketplace-page .brand-mark {
+        justify-content: flex-start;
+        padding: 4px 0;
+    }
+
+    .marketplace-page .brand-copy strong {
+        font-size: 1.2rem;
+    }
+
+    .marketplace-page .brand-copy span {
+        display: none;
+    }
+
+    .marketplace-page .user-home-actions,
+    .marketplace-page .header-actions {
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+    }
+
+    .marketplace-page .notification-shell {
+        grid-column: 1 / -1;
+    }
+
+    .marketplace-page .header-bottom {
+        display: grid;
+        gap: 12px;
+        padding-bottom: 8px;
+    }
+
+    .marketplace-page .quick-nav {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+
+    .marketplace-page .quick-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .marketplace-page .quick-nav .filter-chip {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 132px;
+    }
+
+    .marketplace-page .hero-copy {
+        padding: 18px;
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at top right, rgba(242, 193, 78, 0.18), transparent 24%),
+            linear-gradient(145deg, rgba(255, 251, 245, 0.96), rgba(246, 235, 221, 0.94));
+    }
+
+    .marketplace-page .hero-copy .eyebrow {
+        font-size: 0.66rem;
+    }
+
+    .marketplace-page .hero-copy h1 {
+        font-size: clamp(1.9rem, 9vw, 2.5rem);
+    }
+
+    .marketplace-page .hero-copy .hero-text {
+        font-size: 0.92rem;
+        max-width: none;
+    }
+
+    .marketplace-page .user-home-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .marketplace-page .hero-stat {
+        padding: 16px;
+        border-radius: 18px;
+        min-height: 0;
+    }
+
+    .marketplace-page .hero-stat strong {
+        font-size: 1.5rem;
+    }
+
+    .marketplace-page .listing-section.user-recipes-panel {
+        padding: 18px 0 18px 18px;
+        overflow: hidden;
+    }
+
+    .marketplace-page .listing-section.user-recipes-panel .section-heading {
+        padding-right: 18px;
+        margin-bottom: 10px;
+    }
+
+    .marketplace-page .listing-section.user-recipes-panel .section-heading h2 {
+        font-size: 1.45rem;
+    }
+
+    .marketplace-page .recipe-feed-tools {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        width: 100%;
+        padding-right: 18px;
+    }
+
+    .marketplace-page .category-filter-shell,
+    .marketplace-page .category-filter-select {
+        width: 100%;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(78vw, 78vw);
+        grid-template-columns: none;
+        gap: 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 18px 8px 0;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-card {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 170px 1fr;
+        min-height: 0;
+        scroll-snap-align: start;
+        border-radius: 24px;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-media {
+        border-radius: 24px 24px 0 0;
+        padding: 12px;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-body {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-body h3 {
+        font-size: 1.08rem;
+        line-height: 1.08;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-body p {
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-footer {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .marketplace-page #recipeGrid.listing-grid .listing-footer .btn {
+        width: 100%;
+        min-height: 42px;
+    }
+
+    .marketplace-page #emptyState.empty-state {
+        margin-right: 18px;
+        padding: 22px 16px;
+    }
+
+    .marketplace-page .notification-panel {
+        border-radius: 20px;
+        padding: 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .recipe-post-layout {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .recipe-post-layout .form-heading {
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .recipe-post-layout .form-heading h1 {
+        font-size: clamp(1.9rem, 9vw, 2.5rem);
+        line-height: 0.98;
+    }
+
+    .recipe-post-layout .results-copy {
+        font-size: 0.92rem;
+    }
+
+    .recipe-post-grid {
+        display: grid;
+        gap: 18px;
+    }
+
+    .upload-panel {
+        order: -1;
+        padding: 0;
+    }
+
+    .photo-panel-heading {
+        gap: 6px;
+    }
+
+    .photo-panel-badges {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+    }
+
+    .photo-panel-badges::-webkit-scrollbar {
+        display: none;
+    }
+
+    .photo-badge {
+        flex: 0 0 auto;
+    }
+
+    .upload-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .upload-actions .btn {
+        min-height: 44px;
+        padding: 0.8rem 0.95rem;
+    }
+
+    .recipe-upload-preview {
+        min-height: 220px;
+        border-radius: 22px;
+    }
+
+    .upload-dropzone {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .upload-copy {
+        gap: 4px;
+    }
+
+    .upload-copy strong {
+        font-size: 0.92rem;
+    }
+
+    .upload-copy span,
+    .upload-hint {
+        font-size: 0.84rem;
+    }
+
+    .upload-meta {
+        border-radius: 18px;
+    }
+
+    .recipe-post-fields {
+        display: grid;
+        gap: 10px;
+    }
+
+    .recipe-post-fields .form-group {
+        margin-bottom: 0;
+    }
+
+    .recipe-post-fields textarea,
+    .recipe-post-fields input,
+    .recipe-post-fields select {
+        border-radius: 16px;
+    }
+
+    .recipe-submit-btn {
+        position: sticky;
+        bottom: 10px;
+        z-index: 10;
+        min-height: 50px;
+        border-radius: 999px;
+        box-shadow: 0 18px 30px rgba(101, 72, 34, 0.18);
+    }
+}
+
+@media (max-width: 640px) {
     .header-top,
     .header-bottom,
     .profile-nav,

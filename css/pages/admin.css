@@ -835,3 +835,115 @@ body.is-review-modal-open {
         margin-top: 8px;
     }
 }
+
+@media (max-width: 640px) {
+    .admin-home {
+        padding: 12px 10px 22px;
+        gap: 14px;
+    }
+
+    .admin-home-header {
+        padding: 18px 16px;
+        border-radius: 22px;
+        margin-bottom: 14px;
+    }
+
+    .admin-title {
+        font-size: clamp(1.9rem, 10vw, 2.7rem);
+    }
+
+    .admin-subtitle {
+        font-size: 0.92rem;
+    }
+
+    .admin-user-chip {
+        padding: 12px 14px;
+        border-radius: 18px;
+    }
+
+    .admin-overview-grid {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card {
+        padding: 16px;
+        border-radius: 20px;
+        gap: 12px;
+    }
+
+    .stat-number {
+        font-size: 1.9rem;
+    }
+
+    .admin-panel {
+        border-radius: 22px;
+    }
+
+    .table-header {
+        padding: 16px;
+    }
+
+    .panel-pill {
+        font-size: 0.68rem;
+        padding: 0.42rem 0.62rem;
+    }
+
+    .table tbody {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .table tr {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .table td {
+        font-size: 0.92rem;
+    }
+
+    .status-pill {
+        font-size: 0.68rem;
+    }
+
+    .review-panel-summary,
+    .review-modal-copy,
+    .review-modal-form-card,
+    .review-modal-lists section {
+        border-radius: 20px;
+    }
+
+    .review-modal-dialog {
+        border-radius: 22px;
+    }
+
+    .review-modal-close {
+        width: 42px;
+        height: 42px;
+        margin-right: 14px;
+        margin-top: 14px;
+        font-size: 1.4rem;
+    }
+
+    .review-modal-copy h2 {
+        font-size: clamp(1.8rem, 9vw, 2.4rem);
+        line-height: 0.98;
+    }
+
+    .review-modal-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .review-modal-image {
+        min-height: 220px;
+    }
+
+    .review-form-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}

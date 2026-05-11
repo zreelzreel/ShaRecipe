@@ -447,6 +447,93 @@
     }
 }
 
+@media (max-width: 640px) {
+    .detail-main {
+        padding-bottom: 28px;
+    }
+
+    .detail-hero {
+        padding-top: 10px;
+    }
+
+    .detail-hero-grid {
+        gap: 12px;
+    }
+
+    .recipe-visual-card {
+        padding: 10px;
+        border-radius: 20px;
+    }
+
+    .recipe-hero-image {
+        min-height: 220px;
+        border-radius: 18px;
+    }
+
+    .recipe-hero-copy {
+        padding: 18px;
+        border-radius: 22px;
+        gap: 14px;
+    }
+
+    .recipe-meta-cluster {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .recipe-author-card,
+    .recipe-price-large {
+        min-height: 0;
+    }
+
+    .recipe-stat-strip {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(42vw, 42vw);
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .recipe-stat-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    .recipe-stat-strip article {
+        scroll-snap-align: start;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        position: sticky;
+        bottom: 10px;
+    }
+
+    .action-buttons .btn:first-child,
+    .action-buttons .btn:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .detail-sections {
+        gap: 14px;
+    }
+
+    .section {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .ingredients-list,
+    .steps-list {
+        gap: 10px;
+    }
+}
+
 /* 2026 remodel: detail refresh */
 .recipe-visual-card,
 .recipe-hero-copy,
