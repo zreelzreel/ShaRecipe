@@ -16,6 +16,8 @@ class ShaRecipeApp {
             'dashboard.html': 'pages/user/dashboard.html',
             'admin.html': 'pages/admin/index.html'
         };
+        this.userRecipeColumns = 'id,user_id,title,description,category,image,ingredients,steps,status,review_remarks,reviewed_at,reviewed_by,likes,creator,created_at';
+        this.userColumns = 'id,username,email,password,display_name,profile_photo,role,is_admin,created_at';
 
         this.dataVersion = '2026-05-11-supabase-sync';
         this.supabase = window.supabaseClient || null;
@@ -25,6 +27,13 @@ class ShaRecipeApp {
         this.realtimeChannel = null;
         this.pollingInterval = null;
         this.lastRefreshAt = 0;
+        this.syncState = {
+            bootstrappedFromCache: true,
+            initialSyncComplete: false,
+            syncInProgress: false,
+            lastSyncSucceeded: false,
+            lastSyncError: null
+        };
         this.users = this.loadCollection(this.storageKeys.users);
         this.recipes = this.loadCollection(this.storageKeys.recipes);
         this.currentUser = this.loadObject(this.storageKeys.currentUser);
@@ -42,11 +51,12 @@ class ShaRecipeApp {
     async initialize() {
         if (!this.supabase) {
             console.error('Supabase client is not available.');
+            this.syncState.lastSyncError = 'Supabase client is not available.';
             return;
         }
 
         await this.ensureRemoteAdmin();
-        await this.refreshData();
+        await this.refreshDataSafe(this.getActiveDataStrategy());
         this.startSyncServices();
     }
 
@@ -136,38 +146,174 @@ class ShaRecipeApp {
         this.saveCurrentUser();
     }
 
-    async refreshData() {
+    getCurrentPageName() {
+        const pathname = window.location.pathname || '';
+        return pathname.split('/').pop() || 'index.html';
+    }
+
+    getActiveDataStrategy() {
+        const pageName = this.getCurrentPageName();
+        const currentUser = this.currentUser;
+
+        if (pageName === 'login.html' || pageName === 'signup.html') {
+            return {
+                loadUsers: true,
+                loadRecipes: false,
+                subscribeUsers: true,
+                subscribeRecipes: false,
+                recipeScope: 'none'
+            };
+        }
+
+        if (pageName === 'admin.html' || pageName === 'index.html' && currentUser?.role === 'admin') {
+            return {
+                loadUsers: true,
+                loadRecipes: true,
+                subscribeUsers: true,
+                subscribeRecipes: true,
+                recipeScope: 'all'
+            };
+        }
+
+        if (pageName === 'home.html'
+            || pageName === 'browse.html'
+            || pageName === 'post-recipe.html'
+            || pageName === 'recipe-detail.html'
+            || pageName === 'dashboard.html') {
+            return {
+                loadUsers: true,
+                loadRecipes: true,
+                subscribeUsers: true,
+                subscribeRecipes: true,
+                recipeScope: 'viewer'
+            };
+        }
+
+        return {
+            loadUsers: false,
+            loadRecipes: false,
+            subscribeUsers: false,
+            subscribeRecipes: false,
+            recipeScope: 'none'
+        };
+    }
+
+    buildRecipeQuery(recipeScope) {
+        const baseQuery = this.supabase
+            .from('recipes')
+            .select(this.userRecipeColumns)
+            .order('created_at', { ascending: false });
+
+        if (recipeScope === 'all') {
+            return baseQuery;
+        }
+
+        const currentUserId = this.currentUser?.id;
+        if (recipeScope === 'viewer' && currentUserId) {
+            return baseQuery.or(`status.eq.approved,user_id.eq.${currentUserId}`);
+        }
+
+        if (recipeScope === 'viewer') {
+            return baseQuery.eq('status', 'approved');
+        }
+
+        return null;
+    }
+
+    mapRemoteUserRow(user) {
+        const localUsers = this.loadCollection(this.storageKeys.users);
+        const local = localUsers.find((entry) => entry.id === user.id) || {};
+        const isAdmin = Boolean(user.is_admin) || user.role === 'admin';
+
+        return {
+            id: user.id,
+            username: user.username || '',
+            email: user.email || '',
+            password: user.password || '',
+            displayName: typeof local.displayName === 'string' && local.displayName
+                ? local.displayName
+                : (user.display_name || ''),
+            profilePhoto: typeof local.profilePhoto === 'string' && local.profilePhoto
+                ? local.profilePhoto
+                : (user.profile_photo || ''),
+            notifications: Array.isArray(local.notifications) ? local.notifications : [],
+            favoriteRecipeIds: Array.isArray(local.favoriteRecipeIds) ? local.favoriteRecipeIds.filter(Boolean) : [],
+            role: isAdmin ? 'admin' : 'user',
+            isAdmin,
+            createdAt: user.created_at || new Date().toISOString()
+        };
+    }
+
+    mapRemoteRecipeRow(recipe) {
+        return {
+            id: recipe.id,
+            userId: recipe.user_id,
+            title: recipe.title || '',
+            description: recipe.description || '',
+            category: this.normalizeRecipeCategory(recipe.category),
+            image: recipe.image || '',
+            ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
+            steps: Array.isArray(recipe.steps) ? recipe.steps : [],
+            status: this.normalizeRecipeStatus(recipe.status || 'pending'),
+            reviewRemarks: recipe.review_remarks || '',
+            reviewedAt: recipe.reviewed_at || '',
+            reviewedBy: recipe.reviewed_by || '',
+            likes: Number(recipe.likes || 0),
+            creator: recipe.creator || '',
+            createdAt: recipe.created_at || new Date().toISOString()
+        };
+    }
+
+    async refreshData(strategy = this.getActiveDataStrategy()) {
         if (this.refreshInFlight) {
             return this.refreshInFlight;
         }
 
+        this.syncState.syncInProgress = true;
+        this.syncState.lastSyncError = null;
         this.refreshInFlight = (async () => {
-            const [usersResult, recipesResult] = await Promise.all([
-                this.supabase
-                    .from('users')
-                    .select('*')
-                    .order('created_at', { ascending: true }),
-                this.supabase
-                    .from('recipes')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-            ]);
-
-            if (usersResult.error) {
-                throw usersResult.error;
-            }
-            if (recipesResult.error) {
-                throw recipesResult.error;
+            const requests = [];
+            if (strategy.loadUsers) {
+                requests.push(
+                    this.supabase
+                        .from('users')
+                        .select(this.userColumns)
+                        .order('created_at', { ascending: true })
+                        .then((result) => ({ key: 'users', result }))
+                );
             }
 
-            this.users = this.mergeRemoteUsers(usersResult.data || []);
-            this.recipes = this.mergeRemoteRecipes(recipesResult.data || []);
+            if (strategy.loadRecipes) {
+                const recipeQuery = this.buildRecipeQuery(strategy.recipeScope);
+                if (recipeQuery) {
+                    requests.push(
+                        recipeQuery.then((result) => ({ key: 'recipes', result }))
+                    );
+                }
+            }
+
+            const results = await Promise.all(requests);
+            results.forEach(({ key, result }) => {
+                if (result.error) {
+                    throw result.error;
+                }
+
+                if (key === 'users') {
+                    this.users = this.mergeRemoteUsers(result.data || []);
+                }
+
+                if (key === 'recipes') {
+                    this.recipes = this.mergeRemoteRecipes(result.data || []);
+                }
+            });
 
             if (this.currentUser?.id) {
                 this.currentUser = this.getUserById(this.currentUser.id) || null;
             }
 
             this.lastRefreshAt = Date.now();
+            this.syncState.initialSyncComplete = true;
+            this.syncState.lastSyncSucceeded = true;
             this.saveUsers();
             this.saveRecipes();
             this.saveCurrentUser();
@@ -176,19 +322,52 @@ class ShaRecipeApp {
 
         try {
             return await this.refreshInFlight;
+        } catch (error) {
+            this.syncState.lastSyncSucceeded = false;
+            this.syncState.lastSyncError = error?.message || 'Unable to sync with Supabase.';
+            throw error;
         } finally {
+            this.syncState.syncInProgress = false;
             this.refreshInFlight = null;
         }
     }
 
-    async refreshDataSafe() {
+    async refreshDataSafe(strategy = this.getActiveDataStrategy()) {
         try {
-            await this.refreshData();
+            await this.refreshData(strategy);
             return true;
         } catch (error) {
             console.error('Unable to refresh shared data.', error);
             return false;
         }
+    }
+
+    getSyncState() {
+        return {
+            ...this.syncState,
+            lastRefreshAt: this.lastRefreshAt
+        };
+    }
+
+    shouldRefreshBeforeLogin(maxAgeMs = 30000) {
+        if (!this.supabase) {
+            return false;
+        }
+
+        if (!this.users.length) {
+            return true;
+        }
+
+        if (!this.lastRefreshAt) {
+            return true;
+        }
+
+        return (Date.now() - this.lastRefreshAt) > maxAgeMs;
+    }
+
+    refreshDataInBackground(reason = 'background') {
+        void reason;
+        this.requestDataRefresh('login-background', 0);
     }
 
     subscribeToData(listener) {
@@ -223,7 +402,7 @@ class ShaRecipeApp {
 
         this.refreshTimer = window.setTimeout(() => {
             this.refreshTimer = null;
-            this.refreshDataSafe();
+            this.refreshDataSafe(this.getActiveDataStrategy());
         }, delay);
     }
 
@@ -256,7 +435,7 @@ class ShaRecipeApp {
             }
 
             this.requestDataRefresh('poll');
-        }, 10000);
+        }, 30000);
     }
 
     startRealtimeSync() {
@@ -264,14 +443,22 @@ class ShaRecipeApp {
             return;
         }
 
-        this.realtimeChannel = this.supabase
-            .channel('sharecipe-live-sync')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, () => {
-                this.requestDataRefresh('recipes-realtime', 150);
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
-                this.requestDataRefresh('users-realtime', 150);
-            })
+        const strategy = this.getActiveDataStrategy();
+        const channel = this.supabase.channel(`sharecipe-live-sync-${this.getCurrentPageName()}`);
+
+        if (strategy.subscribeRecipes) {
+            channel.on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, (payload) => {
+                this.handleRecipeRealtimeChange(payload, strategy);
+            });
+        }
+
+        if (strategy.subscribeUsers) {
+            channel.on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, (payload) => {
+                this.handleUserRealtimeChange(payload);
+            });
+        }
+
+        this.realtimeChannel = channel
             .subscribe((status) => {
                 if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
                     console.warn('Supabase realtime sync is delayed, fallback polling will continue.');
@@ -284,53 +471,120 @@ class ShaRecipeApp {
     }
 
     mergeRemoteUsers(remoteUsers) {
-        const localUsers = this.loadCollection(this.storageKeys.users);
-        const localMap = new Map(localUsers.map((user) => [user.id, user]));
-
-        return remoteUsers.map((user) => {
-            const local = localMap.get(user.id) || {};
-            const isAdmin = Boolean(user.is_admin) || user.role === 'admin';
-
-            return {
-                id: user.id,
-                username: user.username || '',
-                email: user.email || '',
-                password: user.password || '',
-                displayName: typeof local.displayName === 'string' && local.displayName
-                    ? local.displayName
-                    : (user.display_name || ''),
-                profilePhoto: typeof local.profilePhoto === 'string' && local.profilePhoto
-                    ? local.profilePhoto
-                    : (user.profile_photo || ''),
-                notifications: Array.isArray(local.notifications) ? local.notifications : [],
-                favoriteRecipeIds: Array.isArray(local.favoriteRecipeIds) ? local.favoriteRecipeIds.filter(Boolean) : [],
-                role: isAdmin ? 'admin' : 'user',
-                isAdmin,
-                createdAt: user.created_at || new Date().toISOString()
-            };
-        });
+        return remoteUsers.map((user) => this.mapRemoteUserRow(user));
     }
 
     mergeRemoteRecipes(remoteRecipes) {
         return remoteRecipes
             .filter((recipe) => recipe && recipe.id && recipe.user_id)
-            .map((recipe) => ({
-                id: recipe.id,
-                userId: recipe.user_id,
-                title: recipe.title || '',
-                description: recipe.description || '',
-                category: this.normalizeRecipeCategory(recipe.category),
-                image: recipe.image || '',
-                ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
-                steps: Array.isArray(recipe.steps) ? recipe.steps : [],
-                status: this.normalizeRecipeStatus(recipe.status || 'pending'),
-                reviewRemarks: recipe.review_remarks || '',
-                reviewedAt: recipe.reviewed_at || '',
-                reviewedBy: recipe.reviewed_by || '',
-                likes: Number(recipe.likes || 0),
-                creator: recipe.creator || '',
-                createdAt: recipe.created_at || new Date().toISOString()
-            }));
+            .map((recipe) => this.mapRemoteRecipeRow(recipe));
+    }
+
+    upsertUserRecord(user) {
+        const index = this.users.findIndex((entry) => entry.id === user.id);
+        if (index >= 0) {
+            this.users[index] = user;
+        } else {
+            this.users.push(user);
+            this.users.sort((left, right) => new Date(left.createdAt || 0) - new Date(right.createdAt || 0));
+        }
+
+        if (this.currentUser?.id === user.id) {
+            this.currentUser = user;
+            this.saveCurrentUser();
+        }
+
+        this.saveUsers();
+        this.notifyDataListeners();
+    }
+
+    upsertRecipeRecord(recipe) {
+        const index = this.recipes.findIndex((entry) => entry.id === recipe.id);
+        if (index >= 0) {
+            this.recipes[index] = recipe;
+        } else {
+            this.recipes.unshift(recipe);
+        }
+
+        this.recipes.sort((left, right) => new Date(right.createdAt || 0) - new Date(left.createdAt || 0));
+        this.saveRecipes();
+        this.notifyDataListeners();
+    }
+
+    removeUserRecord(userId) {
+        this.users = this.users.filter((entry) => entry.id !== userId);
+        if (this.currentUser?.id === userId) {
+            this.clearSession();
+        }
+        this.saveUsers();
+        this.notifyDataListeners();
+    }
+
+    removeRecipeRecord(recipeId) {
+        this.recipes = this.recipes.filter((entry) => entry.id !== recipeId);
+        this.saveRecipes();
+        this.notifyDataListeners();
+    }
+
+    shouldIncludeRecipeRow(recipeRow, strategy = this.getActiveDataStrategy()) {
+        if (!recipeRow || !recipeRow.id || !recipeRow.user_id) {
+            return false;
+        }
+
+        if (strategy.recipeScope === 'all') {
+            return true;
+        }
+
+        if (strategy.recipeScope === 'viewer') {
+            return recipeRow.user_id === this.currentUser?.id || this.normalizeRecipeStatus(recipeRow.status) === 'approved';
+        }
+
+        return false;
+    }
+
+    handleRecipeRealtimeChange(payload, strategy = this.getActiveDataStrategy()) {
+        const eventType = payload?.eventType;
+        const newRow = payload?.new;
+        const oldRow = payload?.old;
+
+        if (eventType === 'DELETE') {
+            if (oldRow?.id) {
+                this.removeRecipeRecord(oldRow.id);
+            }
+            return;
+        }
+
+        if (!newRow?.id) {
+            this.requestDataRefresh('recipes-realtime-fallback', 150);
+            return;
+        }
+
+        if (!this.shouldIncludeRecipeRow(newRow, strategy)) {
+            this.removeRecipeRecord(newRow.id);
+            return;
+        }
+
+        this.upsertRecipeRecord(this.mapRemoteRecipeRow(newRow));
+    }
+
+    handleUserRealtimeChange(payload) {
+        const eventType = payload?.eventType;
+        const newRow = payload?.new;
+        const oldRow = payload?.old;
+
+        if (eventType === 'DELETE') {
+            if (oldRow?.id) {
+                this.removeUserRecord(oldRow.id);
+            }
+            return;
+        }
+
+        if (!newRow?.id) {
+            this.requestDataRefresh('users-realtime-fallback', 150);
+            return;
+        }
+
+        this.upsertUserRecord(this.mapRemoteUserRow(newRow));
     }
 
     async ensureRemoteAdmin() {
