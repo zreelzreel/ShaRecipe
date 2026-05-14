@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const loginForm = document.getElementById('loginForm');
     const errorDiv = document.getElementById('loginError');
+    const statusDiv = document.getElementById('loginStatus');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.querySelector('.toggle-password');
@@ -28,20 +29,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         const password = passwordInput.value;
 
         setSubmittingState(true);
-        await window.ShaRecipeApp?.refreshDataSafe();
 
         if (window.ShaRecipeApp?.login(username, password)) {
             clearError();
+            clearStatus();
+            if (window.ShaRecipeApp?.shouldRefreshBeforeLogin()) {
+                showStatus('Signing in with saved data while syncing the latest account updates...');
+                window.ShaRecipeApp?.refreshDataInBackground('login-success');
+            }
             return;
         }
 
         errorDiv.textContent = 'Invalid username or password.';
         errorDiv.style.display = 'block';
+        updateSyncStatus();
         setSubmittingState(false);
     });
 
-    usernameInput.addEventListener('input', clearError);
-    passwordInput.addEventListener('input', clearError);
+    usernameInput.addEventListener('input', clearMessages);
+    passwordInput.addEventListener('input', clearMessages);
 
     togglePassword?.addEventListener('click', function() {
         const type = passwordInput.type === 'password' ? 'text' : 'password';
@@ -61,6 +67,43 @@ document.addEventListener('DOMContentLoaded', async function() {
         errorDiv.style.display = 'none';
     }
 
+    function showStatus(message) {
+        if (!statusDiv) return;
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+    }
+
+    function clearStatus() {
+        if (!statusDiv) return;
+        statusDiv.textContent = '';
+        statusDiv.style.display = 'none';
+    }
+
+    function clearMessages() {
+        clearError();
+        clearStatus();
+    }
+
+    function updateSyncStatus() {
+        const syncState = window.ShaRecipeApp?.getSyncState?.();
+        if (!syncState) {
+            clearStatus();
+            return;
+        }
+
+        if (syncState.syncInProgress) {
+            showStatus('Checking the latest account data...');
+            return;
+        }
+
+        if (syncState.lastSyncError) {
+            showStatus('Using saved account data while the server connection is catching up.');
+            return;
+        }
+
+        clearStatus();
+    }
+
     function setSubmittingState(nextState) {
         isSubmitting = nextState;
         if (submitBtn) {
@@ -70,4 +113,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         usernameInput.disabled = nextState;
         passwordInput.disabled = nextState;
     }
+
+    updateSyncStatus();
 });
