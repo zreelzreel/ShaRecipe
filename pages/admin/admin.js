@@ -79,10 +79,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             const isSelected = recipe.id === selectedRecipeId;
             const actions = status === 'pending'
                 ? `
+                        <button class="btn btn-secondary btn-sm" type="button" data-view-recipe="${recipe.id}">View</button>
                         <button class="btn btn-secondary btn-sm" type="button" data-review-recipe="${recipe.id}">Review</button>
                         <button class="delete-btn" type="button" data-delete-recipe="${recipe.id}">Delete</button>
                     `
-                : '<span class="results-copy">Locked</span>';
+                : `
+                        <button class="btn btn-secondary btn-sm" type="button" data-view-recipe="${recipe.id}">View</button>
+                    `;
             return `
                 <tr class="${isSelected ? 'is-selected-row' : ''}">
                     <td>${escapeHtml(recipe.title || 'Untitled recipe')}</td>
@@ -95,6 +98,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </tr>
             `;
         }).join('');
+
+        tbody.querySelectorAll('[data-view-recipe]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                selectedRecipeId = button.dataset.viewRecipe;
+                renderRecipes();
+                renderReviewPanel();
+                openReviewModal();
+            });
+        });
 
         tbody.querySelectorAll('[data-review-recipe]').forEach(function(button) {
             button.addEventListener('click', function() {
@@ -132,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
 
         if (!recipe) {
-            panel.innerHTML = 'Click <strong>Review</strong> on a pending recipe to open the full review pop-up.';
+            panel.innerHTML = 'Click <strong>View</strong> or <strong>Review</strong> on a recipe to open the full recipe details.';
             reviewModalContent.innerHTML = '';
             closeReviewModal();
             return;
