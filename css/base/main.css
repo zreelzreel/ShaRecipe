@@ -32,6 +32,73 @@
     --transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@media (max-width: 640px) {
+    .welcome-page {
+        background:
+            radial-gradient(circle at top center, rgba(101, 201, 172, 0.24), transparent 28%),
+            linear-gradient(180deg, #eef9f4 0%, #f9f3ea 48%, #f0e2d3 100%);
+    }
+
+    .welcome-page .hero-bg {
+        opacity: 0.72;
+        filter: blur(0);
+    }
+
+    .welcome-page .welcome-shell {
+        gap: 14px;
+    }
+
+    .welcome-page .welcome-copy {
+        padding: 22px 20px;
+        border-radius: 30px;
+        background:
+            linear-gradient(145deg, rgba(101, 201, 172, 0.96), rgba(82, 183, 150, 0.92) 56%, rgba(57, 144, 123, 0.95));
+        box-shadow: 0 22px 44px rgba(51, 128, 108, 0.22);
+        color: #f7fffb;
+    }
+
+    .welcome-page .hero-kicker,
+    .welcome-page .brand-logo-subtitle,
+    .welcome-page .tagline {
+        color: rgba(247, 255, 251, 0.84);
+    }
+
+    .welcome-page .welcome-headline {
+        color: #ffffff;
+    }
+
+    .welcome-page .welcome-actions {
+        gap: 10px;
+    }
+
+    .welcome-page .welcome-actions .btn-primary {
+        background: #ffffff;
+        color: #23735f;
+    }
+
+    .welcome-page .welcome-actions .btn-secondary {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.26);
+    }
+
+    .welcome-page .welcome-showcase {
+        gap: 12px;
+    }
+
+    .welcome-page .showcase-featured,
+    .welcome-page .showcase-card {
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 16px 34px rgba(82, 108, 95, 0.12);
+    }
+
+    .welcome-page .showcase-content h3,
+    .welcome-page .showcase-card strong {
+        color: var(--ink);
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -739,6 +806,40 @@ img {
         min-height: 50px;
         padding: 0.95rem 1.1rem;
         font-size: 0.82rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .welcome-page {
+        background:
+            radial-gradient(circle at top center, rgba(101, 201, 172, 0.24), transparent 28%),
+            linear-gradient(180deg, #eef9f4 0%, #f9f3ea 48%, #f0e2d3 100%);
+    }
+
+    .welcome-page .welcome-copy {
+        padding: 22px 20px;
+        border-radius: 30px;
+        background:
+            linear-gradient(145deg, rgba(101, 201, 172, 0.96), rgba(82, 183, 150, 0.92) 56%, rgba(57, 144, 123, 0.95));
+        box-shadow: 0 22px 44px rgba(51, 128, 108, 0.22);
+        color: #f7fffb;
+    }
+
+    .welcome-page .hero-kicker,
+    .welcome-page .brand-logo-subtitle,
+    .welcome-page .tagline {
+        color: rgba(247, 255, 251, 0.84);
+    }
+
+    .welcome-page .welcome-headline {
+        color: #ffffff;
+    }
+
+    .welcome-page .showcase-featured,
+    .welcome-page .showcase-card {
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 16px 34px rgba(82, 108, 95, 0.12);
     }
 }
 
