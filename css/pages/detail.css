@@ -608,3 +608,52 @@
         font-size: 0.8rem;
     }
 }
+
+@media (max-width: 640px) {
+    .detail-page {
+        background:
+            radial-gradient(circle at top center, rgba(101, 201, 172, 0.28), transparent 28%),
+            linear-gradient(180deg, #eef9f4 0%, #f8f3ec 46%, #f0e2d2 100%);
+    }
+
+    .detail-main {
+        padding-bottom: 108px;
+    }
+
+    .recipe-visual-card,
+    .recipe-hero-copy,
+    .section {
+        box-shadow: 0 14px 32px rgba(82, 108, 95, 0.12);
+    }
+
+    .recipe-hero-copy {
+        background:
+            radial-gradient(circle at top right, rgba(101, 201, 172, 0.18), transparent 24%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 250, 247, 0.92));
+    }
+
+    .recipe-hero-copy .eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        padding: 0.42rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(101, 201, 172, 0.12);
+        color: #2f7d68;
+    }
+
+    .recipe-title-detail {
+        font-size: clamp(2rem, 9vw, 2.7rem);
+        letter-spacing: -0.04em;
+    }
+
+    .recipe-stat-strip article,
+    .recipe-author-card {
+        background: rgba(255, 255, 255, 0.92);
+    }
+}
+
+@media (max-width: 640px) {
+    .detail-main {
+        padding-bottom: 108px;
+    }
+}

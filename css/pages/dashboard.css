@@ -257,6 +257,118 @@
 }
 
 @media (max-width: 640px) {
+    .dashboard-main {
+        padding-top: 10px;
+        padding-bottom: 108px;
+        gap: 16px;
+    }
+
+    .dashboard-layout {
+        gap: 16px;
+    }
+
+    .dashboard-side {
+        order: 2;
+        gap: 14px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 249, 0.92));
+    }
+
+    .dashboard-hero {
+        gap: 18px;
+        padding: 20px;
+        background:
+            radial-gradient(circle at top right, rgba(101, 201, 172, 0.22), transparent 26%),
+            linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(241, 249, 246, 0.94));
+    }
+
+    .dashboard-profile {
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+    }
+
+    .dashboard-copy {
+        justify-items: center;
+    }
+
+    .dashboard-copy .eyebrow {
+        display: inline-flex;
+        padding: 0.42rem 0.78rem;
+        border-radius: 999px;
+        background: rgba(101, 201, 172, 0.12);
+        color: #2f7d68;
+    }
+
+    .dashboard-copy h1 {
+        font-size: clamp(2rem, 9vw, 2.6rem);
+        line-height: 1.02;
+    }
+
+    .dashboard-photo-shell {
+        width: 98px;
+        height: 98px;
+        border-radius: 28px;
+    }
+
+    .dashboard-photo,
+    .dashboard-photo-fallback {
+        border-radius: 28px;
+    }
+
+    .dashboard-upload-row {
+        gap: 10px;
+        padding: 0;
+        border: 0;
+    }
+
+    .dashboard-upload-row .btn,
+    .dashboard-upload-row label.btn {
+        width: 100%;
+    }
+
+    .dashboard-metrics {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(38vw, 1fr);
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+
+    .dashboard-metrics::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dashboard-metrics .metric-card {
+        min-height: 0;
+        padding: 16px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 12px 22px rgba(79, 110, 97, 0.1);
+    }
+
+    .dashboard-metrics .metric-card strong {
+        font-size: 1.45rem;
+    }
+
+    .dashboard-side h2 {
+        font-size: 1.5rem;
+        line-height: 1.06;
+    }
+
+    .dashboard-action-link {
+        border-radius: 18px;
+        background: rgba(244, 249, 246, 0.92);
+    }
+
+    .dashboard-recipes {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 640px) {
     .dashboard-hero {
         gap: 16px;
     }
@@ -592,5 +704,54 @@
     .photo-editor-close,
     .photo-editor-actions .btn {
         width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-main {
+        padding-top: 10px;
+        padding-bottom: 108px;
+        gap: 16px;
+    }
+
+    .dashboard-hero {
+        padding: 20px;
+        background:
+            radial-gradient(circle at top right, rgba(101, 201, 172, 0.22), transparent 26%),
+            linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(241, 249, 246, 0.94));
+    }
+
+    .dashboard-copy .eyebrow {
+        display: inline-flex;
+        padding: 0.42rem 0.78rem;
+        border-radius: 999px;
+        background: rgba(101, 201, 172, 0.12);
+        color: #2f7d68;
+    }
+
+    .dashboard-copy h1 {
+        font-size: clamp(2rem, 9vw, 2.6rem);
+        line-height: 1.02;
+    }
+
+    .dashboard-metrics {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(38vw, 1fr);
+        gap: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .dashboard-metrics::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dashboard-metrics .metric-card {
+        min-height: 0;
+        padding: 16px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 12px 22px rgba(79, 110, 97, 0.1);
     }
 }
